@@ -53,6 +53,17 @@ public class ConnectionPostgreSQL {
         this.connectionStack.push(connection);
     }
 
+    public void closeConnections() {
+        try {
+            for (Connection conn : this.connectionStack) {
+                conn.close();
+            }
+        } catch (Exception e) {
+            System.out.println("Connection failed to close" + e.getMessage());
+        }
+        this.connectionStack.clear();
+    }
+
     public int countConnections() {
         return this.connectionStack.size();
     }
