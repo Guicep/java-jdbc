@@ -15,9 +15,9 @@ public class CreateDatabase {
             stmt.execute("CREATE DATABASE jdbc_db;");
             connection.addConnection(conn);
         } catch (ConnectionException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Connection exception: "+ e.getMessage());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println("Exception: " + e.getMessage());
         }
     }
 }
