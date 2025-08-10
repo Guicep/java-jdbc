@@ -6,4 +6,4 @@ En vez de que por cada consulta se tenga que abrir o cerrar una conexion a la ba
 
 ![alt text][logo]
 
-[logo]: https://github.com/Guicep/java-jdbc/tree/main/md/connectionpool.png "connectionpool"
+[logo]: https://github.com/Guicep/java-jdbc/raw/main/md/connectionpool.png "connectionpool"
