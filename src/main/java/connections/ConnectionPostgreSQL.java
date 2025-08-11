@@ -1,34 +1,22 @@
 package connections;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.util.Properties;
 import utils.ConnectionException;
-import java.util.Stack;
+import org.postgresql.ds.PGSimpleDataSource;
 
 public class ConnectionPostgreSQL {
-    private final Stack<Connection> connectionStack;
     private static ConnectionPostgreSQL instance;
+    private PGSimpleDataSource dataSource;
 
     private ConnectionPostgreSQL() throws ConnectionException {
 
-        this.connectionStack = new Stack<>();
-
         final int MAX_POOL_SIZE = 10;
-
-        Properties properties = new Properties();
-        properties.put("user", "jdbc_user");
-        properties.put("password", "jdbc_password");
-
-        try {
-            for (int i = 0; i < MAX_POOL_SIZE; i++) {
-                this.connectionStack.push(
-                        DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", properties)
-                );
-            }
-        } catch (Exception e) {
-            throw new ConnectionException("Fail to create connection to database");
-        }
+        this.dataSource = new PGSimpleDataSource();
+        this.dataSource.setServerNames(new String[]{"localhost"});
+        this.dataSource.setPortNumbers(new int[]{5432});
+        this.dataSource.setDatabaseName("postgres");
+        this.dataSource.setUser("jdbc_user");
+        this.dataSource.setPassword("jdbc_password");
     }
 
     public static ConnectionPostgreSQL getInstance() {
@@ -43,28 +31,12 @@ public class ConnectionPostgreSQL {
     }
 
     public Connection getConnection() throws ConnectionException {
-        if (this.connectionStack.isEmpty()) {
-            throw new ConnectionException("No connection available");
-        }
-        return this.connectionStack.pop();
-    }
-
-    public void addConnection(Connection connection) {
-        this.connectionStack.push(connection);
-    }
-
-    public void closeConnections() {
+        Connection conn = null;
         try {
-            for (Connection conn : this.connectionStack) {
-                conn.close();
-            }
+            conn = this.dataSource.getConnection();
         } catch (Exception e) {
-            System.out.println("Connection failed to close" + e.getMessage());
+            throw new ConnectionException("Fail to connect: " + e.getMessage());
         }
-        this.connectionStack.clear();
-    }
-
-    public int countConnections() {
-        return this.connectionStack.size();
+        return conn;
     }
 }

@@ -7,3 +7,6 @@ En vez de que por cada consulta se tenga que abrir o cerrar una conexion a la ba
 ![alt text][logo]
 
 [logo]: https://github.com/Guicep/java-jdbc/raw/main/md/connectionpool.png "connectionpool"
+
+## DataSource
+Cada Driver de un proveedor deberia por lo menos tener soporte para el DataSource basico.
