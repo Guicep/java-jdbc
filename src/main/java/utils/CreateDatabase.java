@@ -13,7 +13,7 @@ public class CreateDatabase {
         try {
             conn = connection.getConnection();
             Statement stmt = conn.createStatement();
-            stmt.executeUpdate("CREATE DATABASE jdbc_db;");
+            //stmt.executeUpdate("CREATE DATABASE jdbc_db;");
         } catch (ConnectionException e) {
             System.out.println("Connection exception: "+ e.getMessage());
         } catch (Exception e) {

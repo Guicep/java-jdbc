@@ -1,22 +1,30 @@
 package connections;
 
 import java.sql.Connection;
+import java.util.Properties;
+import java.io.PrintWriter;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import utils.ConnectionException;
-import org.postgresql.ds.PGSimpleDataSource;
 
 public class ConnectionPostgreSQL {
     private static ConnectionPostgreSQL instance;
-    private PGSimpleDataSource dataSource;
+    private final HikariDataSource dataSource;
 
     private ConnectionPostgreSQL() throws ConnectionException {
 
-        final int MAX_POOL_SIZE = 10;
-        this.dataSource = new PGSimpleDataSource();
-        this.dataSource.setServerNames(new String[]{"localhost"});
-        this.dataSource.setPortNumbers(new int[]{5432});
-        this.dataSource.setDatabaseName("postgres");
-        this.dataSource.setUser("jdbc_user");
-        this.dataSource.setPassword("jdbc_password");
+        final int MAX_POOL_SIZE = 5;
+        Properties props = new Properties();
+        props.setProperty("dataSourceClassName", "org.postgresql.ds.PGSimpleDataSource");
+        props.setProperty("dataSource.user", "jdbc_user");
+        props.setProperty("dataSource.password", "jdbc_password");
+        props.setProperty("dataSource.databaseName", "postgres");
+        props.setProperty("poolName", "jdbc_pool");
+        props.setProperty("maximumPoolSize", Integer.toString(MAX_POOL_SIZE));
+        props.put("dataSource.logWriter", new PrintWriter(System.out));
+        HikariConfig config = new HikariConfig(props);
+        this.dataSource = new HikariDataSource(config);
     }
 
     public static ConnectionPostgreSQL getInstance() {
@@ -38,5 +46,9 @@ public class ConnectionPostgreSQL {
             throw new ConnectionException("Fail to connect: " + e.getMessage());
         }
         return conn;
+    }
+
+    public void close() {
+        this.dataSource.close();
     }
 }
